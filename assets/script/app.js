@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const modal = document.querySelector('.modal');
     const closeButtons = document.querySelectorAll('.close');
     const settingsButton = document.querySelector('.settings');
+    const acceptAllButton = document.querySelector('.acceptAll');
 
     // Always display the modal when the page loads
     modal.style.display = "block";
@@ -17,32 +18,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Save settings button
     settingsButton.addEventListener("click", () => {
-        saveCookieSettings();
+        savePreferences(); // Save current preferences when 'Save Preferences' is clicked
         modal.style.display = "none";
     });
 
-    // Check if cookies are enabled and if there are any cookies stored
-    if (getCookie("cookieConsent")) {
-        loadSavedSettings();
-    }
+    // Accept all button
+    acceptAllButton.addEventListener("click", () => {
+        acceptAllPreferences();
+    });
 
-    // Add event listeners to acceptAllButton and cookieButton if they exist
-    const acceptAllButton = document.getElementById('acceptAllButton');
-    if (acceptAllButton) {
-        acceptAllButton.addEventListener("click", () => {
-            acceptAllPreferences();
-        });
-    }
-
-    const cookieButton = document.getElementById('cookieButton');
-    if (cookieButton) {
-        cookieButton.addEventListener("click", () => {
-            modal.style.display = "block";
-        });
-    }
+    // Load saved preferences when the page loads
+    loadSavedPreferences();
+    
+    // Display user information
+    displayUserInfo();
 });
 
-// Set all preferences (checkboxes) to true
+// Set all preferences (checkboxes) to checked
 function acceptAllPreferences() {
     const cookieOptions = document.querySelectorAll(".cookieOption");
     cookieOptions.forEach(option => {
@@ -50,22 +42,27 @@ function acceptAllPreferences() {
     });
 }
 
-// Save settings
-function saveCookieSettings() {
-    const cookieOptions = document.querySelectorAll(".cookieOption");
+// Save preferences
+function savePreferences() {
     const selectedOptions = {};
+
+    // Save preferences with 'rejected' for unchecked options
+    const cookieOptions = document.querySelectorAll(".cookieOption");
     cookieOptions.forEach(option => {
-        selectedOptions[option.name] = option.checked;
+        selectedOptions[option.name] = option.checked ? true : 'rejected';
     });
-    setCookie("cookieConsent", JSON.stringify(selectedOptions), 20); // Live for 20 seconds
+
+    console.log("Saved Preferences:", selectedOptions); // Debugging
+
+    setCookie("userPreferences", JSON.stringify(selectedOptions), 20); // Live for 20 seconds
 }
 
-// Load saved settings from cookies
-function loadSavedSettings() {
-    const savedOptions = JSON.parse(getCookie("cookieConsent"));
+// Load saved preferences
+function loadSavedPreferences() {
+    const savedOptions = JSON.parse(getCookie("userPreferences") || "{}");
     const cookieOptions = document.querySelectorAll(".cookieOption");
     cookieOptions.forEach(option => {
-        option.checked = savedOptions[option.name];
+        option.checked = savedOptions[option.name] === true; // Convert 'rejected' back to false
     });
 }
 
@@ -91,4 +88,78 @@ function getCookie(name) {
         }
     }
     return "";
+}
+
+// Display user information
+function displayUserInfo() {
+    const savedOptions = JSON.parse(getCookie("userPreferences") || "{}");
+
+    // Retrieve screen height and width if allowed by preferences
+    if (savedOptions.screenHeight === true) {
+        const screenHeight = window.screen.height;
+        console.log("Screen Height:", screenHeight);
+    } else {
+        console.log("Screen Height: rejected");
+    }
+
+    if (savedOptions.screenWidth === true) {
+        const screenWidth = window.screen.width;
+        console.log("Screen Width:", screenWidth);
+    } else {
+        console.log("Screen Width: rejected");
+    }
+
+    // Retrieve browser information if allowed by preferences
+    if (savedOptions.browser === true) {
+        const browserInfo = navigator.userAgent;
+        console.log("Browser Info:", browserInfo);
+    } else {
+        console.log("Browser Info: rejected");
+    }
+
+    // Retrieve operating system information if allowed by preferences
+    if (savedOptions.operatingSystem === true) {
+        const osInfo = getOperatingSystem();
+        console.log("Operating System:", osInfo);
+    } else {
+        console.log("Operating System: rejected");
+    }
+}
+
+// Save user information to cookies
+function saveUserInfoToCookies(screenHeight, screenWidth, browserInfo, osInfo) {
+    const userInfo = {
+        screenHeight: screenHeight,
+        screenWidth: screenWidth,
+        browserInfo: browserInfo,
+        osInfo: osInfo
+    };
+
+    console.log("User Info:", userInfo); // Debugging
+
+    setCookie("userInfo", JSON.stringify(userInfo), 20); // Live for 20 seconds
+}
+
+// Get the operating system
+function getOperatingSystem() {
+    const userAgent = navigator.userAgent;
+    let os = "Unknown";
+    switch(true) {
+        case userAgent.includes("Windows"):
+            os = "Windows";
+            break;
+        case userAgent.includes("Mac"):
+            os = "MacOS";
+            break;
+        case userAgent.includes("Linux"):
+            os = "Linux";
+            break;
+        case userAgent.includes("Android"):
+            os = "Android";
+            break;
+        case userAgent.includes("iOS"):
+            os = "iOS";
+            break;
+    }
+    return os;
 }
