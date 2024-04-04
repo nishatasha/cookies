@@ -33,23 +33,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Display user information
     displayUserInfo();
-
-    // Turn on toggle buttons by default
-    const toggleButtons = document.querySelectorAll(".toggle");
-    toggleButtons.forEach(button => {
-        // Simulate click event to turn on toggle
-        button.checked = true;
-        button.dispatchEvent(new Event('change'));
-    });
 });
 
 // Set all preferences (checkboxes) to checked
 function acceptAllPreferences() {
     const savedOptions = JSON.parse(getCookie("userPreferences") || "{}");
     const allUserInfoInCookie = savedOptions.screenHeight !== undefined &&
-                                savedOptions.screenWidth !== undefined &&
-                                savedOptions.browser !== undefined &&
-                                savedOptions.operatingSystem !== undefined;
+        savedOptions.screenWidth !== undefined &&
+        savedOptions.browser !== undefined &&
+        savedOptions.operatingSystem !== undefined;
 
     if (allUserInfoInCookie) {
         const cookieOptions = document.querySelectorAll(".cookieOption");
@@ -78,7 +70,7 @@ function savePreferences() {
     console.log("Saved Preferences:", selectedOptions); // Debugging
 
     // Overwrite existing cookie with new preferences
-    setCookie("userPreferences", JSON.stringify(selectedOptions), 20); // Live for 20 seconds
+    setCookie("userPreferences", JSON.stringify(selectedOptions)); // No expiration set
 
     // Display updated user information
     displayUserInfo();
@@ -103,11 +95,8 @@ function loadSavedPreferences() {
 }
 
 // Set a cookie
-function setCookie(name, value, seconds) {
-    const d = new Date();
-    d.setTime(d.getTime() + (seconds * 1000));
-    const expires = "expires=" + d.toUTCString();
-    document.cookie = name + "=" + value + ";" + expires + ";path=/";
+function setCookie(name, value) {
+    document.cookie = name + "=" + value + ";path=/";
 }
 
 // Get a cookie
@@ -169,6 +158,7 @@ function getOperatingSystem() {
             return "Unknown";
     }
 }
+
 
 // Display user information
 function displayUserInfo() {
