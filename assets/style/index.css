@@ -29,23 +29,34 @@ main {
 }
 
 .modal {
-    display: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: fixed;
     z-index: 1;
     left: 0;
     top: 0;
-    width: 50%;
-    height: 50%;
-    place-items: center;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
+
 .modal-content {
-    background-color: #fefefe;
+    background-color: #ede4f6;
     margin: 20% auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 60%;
+    width: 40%;
     text-align: center;
+}
+
+.settings {
+    color: #fff;
+    background-color: rgb(223, 25, 223);
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 18px;
 }
 
 .close {
@@ -114,11 +125,11 @@ main {
 }
 
 input:checked+.slider {
-    background-color: #2196F3;
+    background-color: rgb(223, 25, 223);
 }
 
 input:focus+.slider {
-    box-shadow: 0 0 1px #2196F3;
+    box-shadow: 0 0 1px rgb(223, 25, 223);
 }
 
 input:checked+.slider:before {

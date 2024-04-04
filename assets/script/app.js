@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const modal = document.querySelector('.modal');
     const closeButtons = document.querySelectorAll('.close');
     const settingsButton = document.querySelector('.settings');
-    const acceptAllButton = document.getElementById('acceptAllButton');
 
     // Always display the modal when the page loads
     modal.style.display = "block";
@@ -22,19 +21,24 @@ document.addEventListener("DOMContentLoaded", () => {
         modal.style.display = "none";
     });
 
-    // Accept all button
-    acceptAllButton.addEventListener("click", () => {
-        acceptAllPreferences();
-    });
-
-    // Cookie consent banner button
-    cookieButton.addEventListener("click", () => {
-        modal.style.display = "block";
-    });
-
     // Check if cookies are enabled and if there are any cookies stored
     if (getCookie("cookieConsent")) {
         loadSavedSettings();
+    }
+
+    // Add event listeners to acceptAllButton and cookieButton if they exist
+    const acceptAllButton = document.getElementById('acceptAllButton');
+    if (acceptAllButton) {
+        acceptAllButton.addEventListener("click", () => {
+            acceptAllPreferences();
+        });
+    }
+
+    const cookieButton = document.getElementById('cookieButton');
+    if (cookieButton) {
+        cookieButton.addEventListener("click", () => {
+            modal.style.display = "block";
+        });
     }
 });
 
