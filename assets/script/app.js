@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Accept all button
     acceptAllButton.addEventListener("click", () => {
         acceptAllPreferences();
+        savePreferences(); // Save preferences when 'Accept All' is clicked
     });
 
     // Load saved preferences when the page loads
@@ -54,7 +55,11 @@ function savePreferences() {
 
     console.log("Saved Preferences:", selectedOptions); // Debugging
 
+    // Overwrite existing cookie with new preferences
     setCookie("userPreferences", JSON.stringify(selectedOptions), 20); // Live for 20 seconds
+
+    // Display updated user information
+    displayUserInfo();
 }
 
 // Load saved preferences
@@ -95,35 +100,15 @@ function displayUserInfo() {
     const savedOptions = JSON.parse(getCookie("userPreferences") || "{}");
 
     // Retrieve screen height and width if allowed by preferences
-    if (savedOptions.screenHeight === true) {
-        const screenHeight = window.screen.height;
-        console.log("Screen Height:", screenHeight);
-    } else {
-        console.log("Screen Height: rejected");
-    }
+    const screenHeightMsg = savedOptions.screenHeight === 'rejected' ? 'Screen Height: rejected' : `Screen Height: ${window.screen.height}`;
+    const screenWidthMsg = savedOptions.screenWidth === 'rejected' ? 'Screen Width: rejected' : `Screen Width: ${window.screen.width}`;
+    const browserInfoMsg = savedOptions.browser === 'rejected' ? 'Browser Info: rejected' : `Browser Info: ${navigator.userAgent}`;
+    const osInfoMsg = savedOptions.operatingSystem === 'rejected' ? 'Operating System: rejected' : `Operating System: ${getOperatingSystem()}`;
 
-    if (savedOptions.screenWidth === true) {
-        const screenWidth = window.screen.width;
-        console.log("Screen Width:", screenWidth);
-    } else {
-        console.log("Screen Width: rejected");
-    }
-
-    // Retrieve browser information if allowed by preferences
-    if (savedOptions.browser === true) {
-        const browserInfo = navigator.userAgent;
-        console.log("Browser Info:", browserInfo);
-    } else {
-        console.log("Browser Info: rejected");
-    }
-
-    // Retrieve operating system information if allowed by preferences
-    if (savedOptions.operatingSystem === true) {
-        const osInfo = getOperatingSystem();
-        console.log("Operating System:", osInfo);
-    } else {
-        console.log("Operating System: rejected");
-    }
+    console.log(screenHeightMsg);
+    console.log(screenWidthMsg);
+    console.log(browserInfoMsg);
+    console.log(osInfoMsg);
 }
 
 // Save user information to cookies
